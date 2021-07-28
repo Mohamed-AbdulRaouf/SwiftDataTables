@@ -656,9 +656,9 @@ extension SwiftDataTable {
             return self.columnWidths[index]
         }
         //TODO: Implement it so that the preferred column widths are calculated first, and then the scaling happens after to fill the frame.
-        //        if width != SwiftDataTableAutomaticColumnWidth {
-        //            self.columnWidths[index] = width
-        //        }
+//        if width != SwiftDataTableAutomaticColumnWidth {
+//            self.columnWidths[index] = width
+//        }
         return width
     }
     

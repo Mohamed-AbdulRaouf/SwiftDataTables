@@ -11,7 +11,7 @@ protocol DataCellButtonDelegate {
     func didClickedButton()
 }
 class DataCell: UICollectionViewCell {
-    
+
     //MARK: - Properties
     private enum Properties {
         static let verticalMargin: CGFloat = 5
@@ -68,7 +68,7 @@ class DataCell: UICollectionViewCell {
         }else{
             self.dataLabel.isHidden = false
             self.dataButton.isHidden = true
-            self.dataLabel.text = viewModel.data.stringRepresentation
+        self.dataLabel.text = viewModel.data.stringRepresentation
         }
     }
 }

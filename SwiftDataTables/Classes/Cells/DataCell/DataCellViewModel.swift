@@ -58,9 +58,9 @@ extension DataCellViewModel: Equatable {
     ///   - rhs: Another value to compare.
     public static func ==(lhs: DataCellViewModel, rhs: DataCellViewModel) -> Bool {
         return lhs.data == rhs.data
-            && lhs.highlighted == rhs.highlighted
+        && lhs.highlighted == rhs.highlighted
     }
-    
+
 }
 
 extension DataCellViewModel : DataCellButtonDelegate{
