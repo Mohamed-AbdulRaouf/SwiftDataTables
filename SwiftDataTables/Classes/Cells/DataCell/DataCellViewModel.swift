@@ -8,7 +8,9 @@
 
 import Foundation
 import UIKit
-
+protocol DataCellViewModelButtonDelegate {
+    func didClickedButton()
+}
 open class DataCellViewModel: VirtualPositionTrackable, CollectionViewCellRepresentable {
     
     //MARK: - Public Properties
@@ -21,6 +23,8 @@ open class DataCellViewModel: VirtualPositionTrackable, CollectionViewCellRepres
     public var stringRepresentation: String {
         return self.data.stringRepresentation
     }
+    var delegate : DataCellViewModelButtonDelegate?
+    var buttonTitle = ""
     //MARK: - Lifecycle
     init(data: DataTableValueType){
         self.data = data
@@ -38,7 +42,8 @@ open class DataCellViewModel: VirtualPositionTrackable, CollectionViewCellRepres
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? DataCell else {
             fatalError("error in collection view cell")
         }
-        cell.configure(self)
+        cell.delegate = self
+        cell.configure(self,buttonTitle: buttonTitle)
         return cell
     }
 }
@@ -53,7 +58,15 @@ extension DataCellViewModel: Equatable {
     ///   - rhs: Another value to compare.
     public static func ==(lhs: DataCellViewModel, rhs: DataCellViewModel) -> Bool {
         return lhs.data == rhs.data
-        && lhs.highlighted == rhs.highlighted
+            && lhs.highlighted == rhs.highlighted
     }
+    
+}
 
+extension DataCellViewModel : DataCellButtonDelegate{
+    func didClickedButton() {
+        self.delegate?.didClickedButton()
+    }
+    
+    
 }

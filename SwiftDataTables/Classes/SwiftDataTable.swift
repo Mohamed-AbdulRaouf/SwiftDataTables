@@ -11,7 +11,9 @@ import UIKit
 public typealias DataTableRow = [DataTableValueType]
 public typealias DataTableContent = [DataTableRow]
 public typealias DataTableViewModelContent = [[DataCellViewModel]]
-
+public protocol SwiftDataTableButtonDelegate {
+    func didClickedButton()
+}
 public class SwiftDataTable: UIView {
     public enum SupplementaryViewType: String {
         /// Single header positioned at the top above the column section
@@ -42,7 +44,8 @@ public class SwiftDataTable: UIView {
     }
     
     var options: DataTableConfiguration
-    
+    public var delegateButton:SwiftDataTableButtonDelegate?
+    public var buttonTitle = ""
     //MARK: - Private Properties
     var currentRowViewModels: DataTableViewModelContent {
         get {
@@ -387,7 +390,10 @@ extension SwiftDataTable: UICollectionViewDataSource, UICollectionViewDelegate {
         //else {
         cellViewModel = self.rowModel(at: indexPath)
         //}
+        cellViewModel.delegate = self
+        cellViewModel.buttonTitle = self.buttonTitle
         let cell = cellViewModel.dequeueCell(collectionView: collectionView, indexPath: indexPath)
+        
         return cell
     }
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -650,9 +656,9 @@ extension SwiftDataTable {
             return self.columnWidths[index]
         }
         //TODO: Implement it so that the preferred column widths are calculated first, and then the scaling happens after to fill the frame.
-//        if width != SwiftDataTableAutomaticColumnWidth {
-//            self.columnWidths[index] = width
-//        }
+        //        if width != SwiftDataTableAutomaticColumnWidth {
+        //            self.columnWidths[index] = width
+        //        }
         return width
     }
     
@@ -686,8 +692,8 @@ extension SwiftDataTable {
     /// - Returns: The automatic width of the column irrespective of the Data Grid frame width
     func automaticWidthForColumn(index: Int) -> CGFloat {
         let columnAverage: CGFloat = CGFloat(dataStructure.averageDataLengthForColumn(index: index))
-        let sortingArrowVisualElementWidth: CGFloat = 10 // This is ugly
-      let averageDataColumnWidth: CGFloat = columnAverage + sortingArrowVisualElementWidth + (DataCell.Properties.horizontalMargin * 2)
+        let sortingArrowVisualElementWidth: CGFloat = 20 // This is ugly
+        let averageDataColumnWidth: CGFloat = columnAverage * self.pixelsPerCharacter() + sortingArrowVisualElementWidth
         return max(averageDataColumnWidth, max(self.minimumColumnWidth(), self.minimumHeaderColumnWidth(index: index)))
     }
     
@@ -701,7 +707,12 @@ extension SwiftDataTable {
     }
     
     func minimumHeaderColumnWidth(index: Int) -> CGFloat {
-      return CGFloat(self.dataStructure.headerTitles[index].widthOfString(usingFont: UIFont.boldSystemFont(ofSize: UIFont.labelFontSize)))
+        return CGFloat(self.pixelsPerCharacter() * CGFloat(self.dataStructure.headerTitles[index].count))
+    }
+    
+    //There should be an automated way to retrieve the font size of the cell
+    func pixelsPerCharacter() -> CGFloat {
+        return 14
     }
     
     func heightForPaginationView() -> CGFloat {
@@ -834,4 +845,12 @@ extension SwiftDataTable {
         self.menuLengthViewModel = MenuLengthHeaderViewModel()
         //self.reload();
     }
+}
+
+extension SwiftDataTable : DataCellViewModelButtonDelegate {
+    func didClickedButton() {
+        self.delegateButton?.didClickedButton()
+    }
+    
+    
 }
